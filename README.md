@@ -1,1 +1,1 @@
-# ethernaut_solutions
+# ethernaut-solutions
