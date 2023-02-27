@@ -17,3 +17,6 @@
 [submodule "ethernaut-solutions/lib/forge-std"]
 	path = ethernaut-solutions/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "lib/ethernaut"]
+	path = lib/ethernaut
+	url = https://github.com/OpenZeppelin/ethernaut
