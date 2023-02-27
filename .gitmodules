@@ -1,3 +1,19 @@
 [submodule "hello-ethernaut/lib/forge-std"]
 	path = hello-ethernaut/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "lib/forge-std"]
+	branch = v1.4.0
+[submodule "fallback/lib/forge-std"]
+	path = fallback/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "fallback/lib/ethernaut"]
+	path = fallback/lib/ethernaut
+	url = https://github.com/OpenZeppelin/ethernaut
+[submodule "fallback/lib/openzeppelin-contracts"]
+	path = fallback/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "lib/openzeppelin-contracts"]
+	branch = v4.8.1
+[submodule "ethernaut-solutions/lib/forge-std"]
+	path = ethernaut-solutions/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
