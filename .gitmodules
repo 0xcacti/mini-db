@@ -14,6 +14,8 @@
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
 [submodule "lib/openzeppelin-contracts"]
 	branch = v4.8.1
+	path = lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
 [submodule "ethernaut-solutions/lib/forge-std"]
 	path = ethernaut-solutions/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
