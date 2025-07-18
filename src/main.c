@@ -1,14 +1,15 @@
+#include <stdio.h>
+#include <stdbool.h>
 #include <getopt.h>
+#include <stdlib.h>
 
-int main(int argc, char *argv[]) {
-  int c = 0;
+#include "common.h"
+#include "file.h"
+#include "parse.h"
 
-  while ((c = getopt(argc, argv, "nf:") != -1)) {
-    switch (c) {
-    case 'f':
-      break;
-    case 'n':
-      break;
-    }
-  }
+void print_usage(char *argv[]) {
+}
+
+int main(int argc, char *argv[]) { 
+	
 }
