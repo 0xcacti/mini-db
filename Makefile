@@ -1,11 +1,8 @@
-# Variables first
+# Variables 
 TARGET = bin/dbview
 SRC = $(wildcard src/*.c)
 OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
 CFLAGS = -Iinclude
-
-# Setup commands
-$(shell mkdir -p obj bin)
 
 # Dependencies
 $(OBJ): $(wildcard include/*.h)
