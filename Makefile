@@ -4,9 +4,6 @@ SRC = $(wildcard src/*.c)
 OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
 CFLAGS = -Iinclude
 
-# Dependencies
-$(OBJ): $(wildcard include/*.h)
-
 # Default target first
 default: $(TARGET)
 
@@ -14,7 +11,7 @@ default: $(TARGET)
 $(TARGET): $(OBJ)
 	gcc $(CFLAGS) -o $@ $^
 
-obj/%.o : src/%.c
+obj/%.o : src/%.c include/*.h
 	gcc $(CFLAGS) -c $< -o $@
 
 # Utility targets
