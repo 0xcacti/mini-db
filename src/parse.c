@@ -15,7 +15,33 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
                  char *addstring) {}
 
 int read_employees(int fd, struct dbheader_t *dbhdr,
-                   struct employee_t **employeesOut) {}
+                   struct employee_t **employeesOut) {
+  if (fd < 0) {
+    perror("Invalid file descriptor");
+    return STATUS_ERROR;
+  }
+  int count = dbhdr->count;
+  struct employee_t *employees = calloc(count, sizeof(struct employee_t));
+  if (!employees) {
+    perror("calloc");
+    return STATUS_ERROR;
+  }
+
+  if (read(fd, employees, count * sizeof(struct employee_t)) !=
+      count * sizeof(struct employee_t)) {
+    perror("read");
+    free(employees);
+    return STATUS_ERROR;
+  }
+
+  for (int i = 0; i < count; i++) {
+    employees[i].hours = ntohl(employees[i].hours);
+  }
+
+  employeesOut = &employees;
+
+  return STATUS_SUCCESS;
+}
 
 int output_file(int fd, struct dbheader_t *dbhdr,
                 struct employee_t *employees) {

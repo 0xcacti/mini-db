@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
   int c = 0;
   int dbfd = -1;
   struct dbheader_t *dbhdr = NULL;
+  struct employee_t *employees = NULL;
 
   while ((c = getopt(argc, argv, "nf:")) != -1) {
     switch (c) {
@@ -63,6 +64,12 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "failed to validate database header");
       return -1;
     }
+  }
+
+  if (read_employees(dbfd, dbhdr, &employees) != STATUS_SUCCESS) {
+    fprintf(stderr, "error reading employees from database");
+    close(dbfd);
+    return -1;
   }
 
   int status = output_file(dbfd, dbhdr, NULL);
