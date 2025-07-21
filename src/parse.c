@@ -12,7 +12,10 @@
 void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {}
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
-                 char *addstring) {}
+                 char *addstring) {
+  printf("addString: %s\n", addstring);
+  return STATUS_SUCCESS;
+}
 
 int read_employees(int fd, struct dbheader_t *dbhdr,
                    struct employee_t **employeesOut) {
