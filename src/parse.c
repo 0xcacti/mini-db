@@ -83,6 +83,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
 }
 
 int create_db_header(int fd, struct dbheader_t **headerOut) {
+  (void)fd; // fd is not used in this function, but kept for consistency
   struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
   if (!header) {
     perror("calloc");
