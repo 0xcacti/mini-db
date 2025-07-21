@@ -13,7 +13,12 @@ void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {}
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
                  char *addstring) {
-  printf("addString: %s\n", addstring);
+
+  char *name = strtok(addstring, ",");
+  char *addr = strtok(NULL, ",");
+  char *hours_str = strtok(NULL, ",");
+  printf("Adding employee: %s, %s, %s\n", name, addr, hours_str);
+
   return STATUS_SUCCESS;
 }
 
