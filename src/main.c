@@ -78,6 +78,13 @@ int main(int argc, char *argv[]) {
   }
 
   if (addString != NULL) {
+    dbhdr->count++;
+    employees = realloc(employees, dbhdr->count * sizeof(struct employee_t));
+    if (employees == NULL) {
+      fprintf(stderr, "error reallocating memory for employees");
+      close(dbfd);
+      return -1;
+    }
     if (add_employee(dbhdr, employees, addString) != STATUS_SUCCESS) {
       fprintf(stderr, "error adding employee to database");
       close(dbfd);
@@ -85,7 +92,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  int status = output_file(dbfd, dbhdr, NULL);
+  int status = output_file(dbfd, dbhdr, employees);
   if (status != STATUS_SUCCESS) {
     fprintf(stderr, "error writing to database");
     return -1;

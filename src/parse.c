@@ -17,18 +17,34 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
   char *name = strtok(addstring, ",");
   char *addr = strtok(NULL, ",");
   char *hours_str = strtok(NULL, ",");
-  printf("Adding employee: %s, %s, %s\n", name, addr, hours_str);
+  strncpy(employees[dbhdr->count - 1].name, name,
+          sizeof(employees[dbhdr->count - 1].name));
+  strncpy(employees[dbhdr->count - 1].address, addr,
+          sizeof(employees[dbhdr->count - 1].address));
+  employees[dbhdr->count - 1].hours = atoi(hours_str);
 
   return STATUS_SUCCESS;
 }
 
 int read_employees(int fd, struct dbheader_t *dbhdr,
                    struct employee_t **employeesOut) {
+  int count = dbhdr->count;
+  *employeesOut = NULL;
+
   if (fd < 0) {
     perror("Invalid file descriptor");
     return STATUS_ERROR;
   }
-  int count = dbhdr->count;
+
+  if (count == 0) {
+    return STATUS_SUCCESS; // No employees to read
+  }
+
+  if (lseek(fd, sizeof(struct dbheader_t), SEEK_SET) < 0) {
+    perror("lseek to employee section");
+    return STATUS_ERROR;
+  }
+
   struct employee_t *employees = calloc(count, sizeof(struct employee_t));
   if (!employees) {
     perror("calloc");
@@ -46,7 +62,7 @@ int read_employees(int fd, struct dbheader_t *dbhdr,
     employees[i].hours = ntohl(employees[i].hours);
   }
 
-  employeesOut = &employees;
+  *employeesOut = employees;
 
   return STATUS_SUCCESS;
 }
@@ -57,6 +73,7 @@ int output_file(int fd, struct dbheader_t *dbhdr,
     perror("Invalid file descriptor");
     return STATUS_ERROR;
   }
+  int realcount = dbhdr->count;
 
   dbhdr->magic = htonl(dbhdr->magic);
   dbhdr->filesize = htonl(dbhdr->filesize);
@@ -65,6 +82,10 @@ int output_file(int fd, struct dbheader_t *dbhdr,
 
   lseek(fd, 0, SEEK_SET);
   write(fd, dbhdr, sizeof(struct dbheader_t));
+  for (int i = 0; i < realcount; i++) {
+    employees[i].hours = htonl(employees[i].hours);
+    write(fd, &employees[i], sizeof(struct employee_t));
+  }
   return STATUS_SUCCESS;
 }
 
