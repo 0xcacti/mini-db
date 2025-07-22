@@ -74,6 +74,7 @@ int output_file(int fd, struct dbheader_t *dbhdr,
     return STATUS_ERROR;
   }
   int realcount = dbhdr->count;
+  dbhdr->filesize = sizeof *dbhdr + realcount * sizeof *employees;
 
   dbhdr->magic = htonl(dbhdr->magic);
   dbhdr->filesize = htonl(dbhdr->filesize);
@@ -127,7 +128,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
   struct stat dbstat = {0};
   fstat(fd, &dbstat);
   if (header->filesize != dbstat.st_size) {
-    fprintf(stderr, "corrupted database");
+    fprintf(stderr, "corrupted database\n");
     free(header);
     return STATUS_ERROR;
   }
