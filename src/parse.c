@@ -58,6 +58,25 @@ int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
   return STATUS_SUCCESS;
 }
 
+int update_employee_hours(struct dbheader_t *dbhdr,
+                          struct employee_t *employees, char *updatestring) {
+  char *name = strtok(updatestring, ",");
+  char *hours_str = strtok(NULL, ",");
+  int emp_index = find_employee(dbhdr, employees, name);
+  if (emp_index < 0) {
+    fprintf(stderr, "employee not found\n");
+    return STATUS_ERROR;
+  }
+  int new_hours = atoi(hours_str);
+  if (new_hours < 0) {
+    fprintf(stderr, "invalid hours\n");
+    return STATUS_ERROR;
+  }
+
+  employees[emp_index].hours = new_hours;
+  return STATUS_SUCCESS;
+}
+
 int read_employees(int fd, struct dbheader_t *dbhdr,
                    struct employee_t **employeesOut) {
   int count = dbhdr->count;

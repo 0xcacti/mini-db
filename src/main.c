@@ -120,6 +120,15 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  if (updateString != NULL) {
+    if (update_employee_hours(dbhdr, employees, updateString) !=
+        STATUS_SUCCESS) {
+      fprintf(stderr, "error updating employee in database\n");
+      close(dbfd);
+      return -1;
+    }
+  }
+
   if (list) {
     list_employees(dbhdr, employees);
   }
