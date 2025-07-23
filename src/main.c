@@ -18,6 +18,8 @@ int main(int argc, char *argv[]) {
   char *filepath = NULL;
   bool newfile = false;
   char *addString = NULL;
+  char *removeString = NULL;
+  char *updateString = NULL;
   bool list = false;
   int c = 0;
   int dbfd = -1;
@@ -25,7 +27,7 @@ int main(int argc, char *argv[]) {
   struct dbheader_t *dbhdr = NULL;
   struct employee_t *employees = NULL;
 
-  while ((c = getopt(argc, argv, "nf:a:l")) != -1) {
+  while ((c = getopt(argc, argv, "nf:a:lr:u:")) != -1) {
     switch (c) {
     case 'n':
       newfile = true;
@@ -38,6 +40,12 @@ int main(int argc, char *argv[]) {
       break;
     case 'l':
       list = true;
+      break;
+    case 'r':
+      removeString = optarg;
+      break;
+    case 'u':
+      updateString = optarg;
       break;
     case '?':
       printf("Unknown option: -%c\n", optopt);
@@ -71,13 +79,13 @@ int main(int argc, char *argv[]) {
       return -1;
     }
     if (validate_db_header(dbfd, &dbhdr) == STATUS_ERROR) {
-      fprintf(stderr, "failed to validate database header");
+      fprintf(stderr, "failed to validate database header\n");
       return -1;
     }
   }
 
   if (read_employees(dbfd, dbhdr, &employees) != STATUS_SUCCESS) {
-    fprintf(stderr, "error reading employees from database");
+    fprintf(stderr, "error reading employees from database\n");
     close(dbfd);
     return -1;
   }
@@ -86,12 +94,27 @@ int main(int argc, char *argv[]) {
     dbhdr->count++;
     employees = realloc(employees, dbhdr->count * sizeof(struct employee_t));
     if (employees == NULL) {
-      fprintf(stderr, "error reallocating memory for employees");
+      fprintf(stderr, "error reallocating memory for employees\n");
       close(dbfd);
       return -1;
     }
     if (add_employee(dbhdr, employees, addString) != STATUS_SUCCESS) {
-      fprintf(stderr, "error adding employee to database");
+      fprintf(stderr, "error adding employee to database\n");
+      close(dbfd);
+      return -1;
+    }
+  }
+
+  if (removeString != NULL) {
+    if (remove_employee(dbhdr, employees, removeString) != STATUS_SUCCESS) {
+      fprintf(stderr, "error removing employee from database\n");
+      close(dbfd);
+      return -1;
+    }
+    int new_filesize =
+        sizeof(struct dbheader_t) + (dbhdr->count * sizeof(struct employee_t));
+    if (ftruncate(dbfd, new_filesize) != 0) {
+      fprintf(stderr, "error truncating database file\n");
       close(dbfd);
       return -1;
     }
@@ -106,6 +129,8 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "error writing to database");
     return -1;
   }
+
+  close(dbfd);
 
   return 0;
 }

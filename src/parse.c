@@ -33,6 +33,31 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
   return STATUS_SUCCESS;
 }
 
+int find_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
+                  char *matchstring) {
+  for (int i = 0; i < dbhdr->count; i++) {
+    if (strcmp(employees[i].name, matchstring) == 0) {
+      return i;
+    }
+  }
+
+  return STATUS_ERROR;
+}
+
+int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
+                    char *removestring) {
+  int emp_index = find_employee(dbhdr, employees, removestring);
+  if (emp_index < 0) {
+    fprintf(stderr, "employee not found\n");
+    return STATUS_ERROR;
+  }
+
+  employees[emp_index] = employees[dbhdr->count - 1];
+  dbhdr->count--;
+
+  return STATUS_SUCCESS;
+}
+
 int read_employees(int fd, struct dbheader_t *dbhdr,
                    struct employee_t **employeesOut) {
   int count = dbhdr->count;
@@ -45,11 +70,6 @@ int read_employees(int fd, struct dbheader_t *dbhdr,
 
   if (count == 0) {
     return STATUS_SUCCESS; // No employees to read
-  }
-
-  if (lseek(fd, sizeof(struct dbheader_t), SEEK_SET) < 0) {
-    perror("lseek to employee section");
-    return STATUS_ERROR;
   }
 
   struct employee_t *employees = calloc(count, sizeof(struct employee_t));
@@ -94,6 +114,7 @@ int output_file(int fd, struct dbheader_t *dbhdr,
     employees[i].hours = htonl(employees[i].hours);
     write(fd, &employees[i], sizeof(struct employee_t));
   }
+
   return STATUS_SUCCESS;
 }
 
