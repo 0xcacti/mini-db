@@ -12,6 +12,9 @@ void print_usage(char *argv[]) {
   printf("\t-n: Create a new file\n");
   printf("\t-f <filepath>: Specify the file path\n");
   printf("\t-a <string>: Add an employee with the given string\n");
+  printf("\t-l: List all employees\n");
+  printf("\t-r <string>: Remove an employee with the given name\n");
+  printf("\t-u <string>: Update hours for an employee with the given name\n");
 }
 
 int main(int argc, char *argv[]) {
