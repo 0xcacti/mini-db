@@ -179,7 +179,6 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
     free(header);
     return STATUS_ERROR;
   }
-
   *headerOut = header;
 
   return 0;
