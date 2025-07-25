@@ -69,7 +69,7 @@ int update_employee_hours(struct dbheader_t *dbhdr,
   }
   int new_hours = atoi(hours_str);
   if (new_hours < 0) {
-    fprintf(stderr, "invalid hours\n");
+    fprintf(stderr, "invalid hours, must be number\n");
     return STATUS_ERROR;
   }
 
