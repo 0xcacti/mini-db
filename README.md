@@ -1,3 +1,3 @@
 # Mini DB 
 
-This is a miniature implementation of a database.  
+This is a miniature implementation of a database. 
