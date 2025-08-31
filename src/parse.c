@@ -21,14 +21,21 @@ void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
                  char *addstring) {
 
+  if (!dbhdr || !employees || !addstring) {
+    fprintf(stderr, "Invalid argument(s) to add_employee\n");
+    return STATUS_ERROR;
+  }
+
   char *name = strtok(addstring, ",");
   char *addr = strtok(NULL, ",");
   char *hours_str = strtok(NULL, ",");
-  strncpy(employees[dbhdr->count - 1].name, name,
-          sizeof(employees[dbhdr->count - 1].name));
-  strncpy(employees[dbhdr->count - 1].address, addr,
-          sizeof(employees[dbhdr->count - 1].address));
-  employees[dbhdr->count - 1].hours = atoi(hours_str);
+
+  strncpy(employees[dbhdr->count].name, name,
+          sizeof(employees[dbhdr->count].name));
+  strncpy(employees[dbhdr->count].address, addr,
+          sizeof(employees[dbhdr->count].address));
+  employees[dbhdr->count].hours = atoi(hours_str);
+  dbhdr->count++;
 
   return STATUS_SUCCESS;
 }
