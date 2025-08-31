@@ -88,7 +88,7 @@ int read_employees(int fd, struct dbheader_t *dbhdr,
   }
 
   if (count == 0) {
-    return STATUS_SUCCESS; // No employees to read
+    return STATUS_SUCCESS;
   }
 
   struct employee_t *employees = calloc(count, sizeof(struct employee_t));
@@ -185,7 +185,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
 }
 
 int create_db_header(int fd, struct dbheader_t **headerOut) {
-  (void)fd; // fd is not used in this function, but kept for consistency
+  (void)fd;
   struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
   if (!header) {
     perror("calloc");
