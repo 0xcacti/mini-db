@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "unable to create db file\n");
       return -1;
     }
-    if (create_db_header(dbfd, &dbhdr) == STATUS_ERROR) {
+    if (create_db_header(&dbhdr) == STATUS_ERROR) {
       fprintf(stderr, "unable to create db header\n");
       close(dbfd);
       return -1;
