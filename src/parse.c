@@ -97,8 +97,8 @@ int read_employees(int fd, struct dbheader_t *dbhdr,
     return STATUS_ERROR;
   }
 
-  if (read(fd, employees, count * sizeof(struct employee_t)) !=
-      count * sizeof(struct employee_t)) {
+  ssize_t n = read(fd, employees, count * sizeof(struct employee_t));
+  if (n != (ssize_t)(count * sizeof(struct employee_t))) {
     perror("read");
     free(employees);
     return STATUS_ERROR;
@@ -184,8 +184,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
   return 0;
 }
 
-int create_db_header(int fd, struct dbheader_t **headerOut) {
-  (void)fd;
+int create_db_header(struct dbheader_t **headerOut) {
   struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
   if (!header) {
     perror("calloc");
