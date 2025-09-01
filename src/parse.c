@@ -9,12 +9,17 @@
 #include "common.h"
 #include "parse.h"
 
-void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
+void list_employees(struct dbheader_t *dbhdr, struct employee_t **employees) {
+  if (!dbhdr || !employees || !*employees) {
+    fprintf(stderr, "Invalid argument(s) to list_employees\n");
+    return;
+  }
+
   for (int i = 0; i < dbhdr->count; i++) {
     printf("Employee %d:\n", i);
-    printf("\tName: %s\n", employees[i].name);
-    printf("\tAddress: %s\n", employees[i].address);
-    printf("\tHours: %u\n", employees[i].hours);
+    printf("\tName: %s\n", (*employees)[i].name);
+    printf("\tAddress: %s\n", (*employees)[i].address);
+    printf("\tHours: %u\n", (*employees)[i].hours);
   }
 }
 

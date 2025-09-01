@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (list) {
-    list_employees(dbhdr, employees);
+    list_employees(dbhdr, &employees);
   }
 
   int status = output_file(dbfd, dbhdr, employees);
