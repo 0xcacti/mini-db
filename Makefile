@@ -71,5 +71,9 @@ cdb:
 	@compiledb --output compile_commands.json make clean default
 	@echo "✓ compile_commands.json regenerated"
 
+fmt:
+	@find . -name '*.c' -o -name '*.h' -exec clang-format -i {} +
+	@echo "✓ Code formatted with clang-format"
+
 .PHONY: default run clean cdb
 
