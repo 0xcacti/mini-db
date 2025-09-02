@@ -84,9 +84,15 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
     return STATUS_ERROR;
   }
 
-  size_t new_count = (size_t)dbhdr->count + 1;
-  struct employee_t *tmp =
-      realloc(*employees, new_count * sizeof(struct employee_t));
+  // Handle the initial NULL case explicitly
+  struct employee_t *tmp;
+  if (*employees == NULL) {
+    tmp = malloc(sizeof(struct employee_t));
+  } else {
+    size_t new_count = (size_t)dbhdr->count + 1;
+    tmp = realloc(*employees, new_count * sizeof(struct employee_t));
+  }
+
   if (!tmp) {
     free(buf);
     return STATUS_ERROR;
@@ -94,6 +100,10 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
   *employees = tmp;
 
   struct employee_t *e = &(*employees)[dbhdr->count];
+
+  // Zero out the struct first to be safe
+  memset(e, 0, sizeof(struct employee_t));
+
   strncpy(e->name, name, sizeof(e->name) - 1);
   e->name[sizeof(e->name) - 1] = '\0';
   strncpy(e->address, addr, sizeof(e->address) - 1);
