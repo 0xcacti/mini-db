@@ -23,59 +23,12 @@ void list_employees(struct dbheader_t *dbhdr, struct employee_t **employees) {
   }
 }
 
-// int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
-//                  char *addstring) {
-//
-//   if (!dbhdr || !employees || !addstring) {
-//     fprintf(stderr, "Invalid argument(s) to add_employee\n");
-//     return STATUS_ERROR;
-//   }
-//
-//   char *buf = strdup(addstring);
-//   if (!buf) {
-//     perror("strdup");
-//     return STATUS_ERROR;
-//   }
-//   char *name = strtok(buf, ",");
-//   char *addr = strtok(NULL, ",");
-//   char *hours_str = strtok(NULL, ",");
-//   if (!name || !addr || !hours_str) {
-//     fprintf(stderr, "invalid add string\n");
-//     free(buf);
-//     return STATUS_ERROR;
-//   }
-//
-//   size_t new_count = (size_t)dbhdr->count + 1;
-//   struct employee_t *new_employees =
-//       realloc(*employees, new_count * sizeof(struct employee_t));
-//   if (!new_employees) {
-//     perror("realloc");
-//     free(buf);
-//     return STATUS_ERROR;
-//   }
-//   *employees = new_employees;
-//
-//   struct employee_t *e = &(*employees)[dbhdr->count];
-//   strncpy(e->name, name, NAME
-//   strncpy(employees[dbhdr->count].name, name,
-//           sizeof(employees[dbhdr->count].name));
-//   strncpy(employees[dbhdr->count].address, addr,
-//           sizeof(employees[dbhdr->count].address));
-//   employees[dbhdr->count].hours = atoi(hours_str);
-//   dbhdr->count++;
-//
-//   return STATUS_SUCCESS;
-// }
-
 int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
                  char *addstring) {
-  // Most defensive null checks possible
-  if (dbhdr == NULL)
+  if (!dbhdr || !employees || !addstring) {
+    fprintf(stderr, "Invalid argument(s) to add_employee\n");
     return STATUS_ERROR;
-  if (employees == NULL)
-    return STATUS_ERROR; // employees pointer itself is NULL
-  if (addstring == NULL)
-    return STATUS_ERROR;
+  }
 
   // Make a copy of the input string since strtok modifies it
   size_t len = strlen(addstring);
@@ -152,16 +105,6 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
   return STATUS_SUCCESS;
 }
 
-// int find_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
-//                   char *matchstring) {
-//   for (int i = 0; i < dbhdr->count; i++) {
-//     if (strcmp(employees[i].name, matchstring) == 0) {
-//       return i;
-//     }
-//   }
-//
-//   return STATUS_ERROR;
-// }
 int find_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
                   char *matchstring) {
   if (!employees || !*employees)
@@ -175,19 +118,6 @@ int find_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
   return STATUS_ERROR;
 }
 
-// int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
-//                     char *removestring) {
-//   int emp_index = find_employee(dbhdr, employees, removestring);
-//   if (emp_index < 0) {
-//     fprintf(stderr, "employee not found\n");
-//     return STATUS_ERROR;
-//   }
-//
-//   employees[emp_index] = employees[dbhdr->count - 1];
-//   dbhdr->count--;
-//
-//   return STATUS_SUCCESS;
-// }
 int remove_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
                     char *removestring) {
   int emp_index = find_employee(dbhdr, employees, removestring);
@@ -201,25 +131,6 @@ int remove_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
 
   return STATUS_SUCCESS;
 }
-
-// int update_employee_hours(struct dbheader_t *dbhdr,
-//                           struct employee_t *employees, char *updatestring) {
-//   char *name = strtok(updatestring, ",");
-//   char *hours_str = strtok(NULL, ",");
-//   int emp_index = find_employee(dbhdr, employees, name);
-//   if (emp_index < 0) {
-//     fprintf(stderr, "employee not found\n");
-//     return STATUS_ERROR;
-//   }
-//   int new_hours = atoi(hours_str);
-//   if (new_hours < 0) {
-//     fprintf(stderr, "invalid hours\n");
-//     return STATUS_ERROR;
-//   }
-//
-//   employees[emp_index].hours = new_hours;
-//   return STATUS_SUCCESS;
-// }
 
 int update_employee_hours(struct dbheader_t *dbhdr,
                           struct employee_t **employees, char *updatestring) {
@@ -275,30 +186,6 @@ int read_employees(int fd, struct dbheader_t *dbhdr,
 
   return STATUS_SUCCESS;
 }
-
-// int output_file(int fd, struct dbheader_t *dbhdr,
-//                 struct employee_t *employees) {
-//   if (fd < 0) {
-//     perror("Invalid file descriptor");
-//     return STATUS_ERROR;
-//   }
-//   int realcount = dbhdr->count;
-//   dbhdr->filesize = sizeof *dbhdr + realcount * sizeof *employees;
-//
-//   dbhdr->magic = htonl(dbhdr->magic);
-//   dbhdr->filesize = htonl(dbhdr->filesize);
-//   dbhdr->count = htons(dbhdr->count);
-//   dbhdr->version = htons(dbhdr->version);
-//
-//   lseek(fd, 0, SEEK_SET);
-//   write(fd, dbhdr, sizeof(struct dbheader_t));
-//   for (int i = 0; i < realcount; i++) {
-//     employees[i].hours = htonl(employees[i].hours);
-//     write(fd, &employees[i], sizeof(struct employee_t));
-//   }
-//
-//   return STATUS_SUCCESS;
-// }
 
 int output_file(int fd, struct dbheader_t *dbhdr,
                 struct employee_t *employees) {
