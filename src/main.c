@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
       close(dbfd);
       return -1;
     }
-    if (add_employee(dbhdr, employees, addString) != STATUS_SUCCESS) {
+    if (add_employee(dbhdr, &employees, addString) != STATUS_SUCCESS) {
       fprintf(stderr, "error adding employee to database\n");
       close(dbfd);
       return -1;
