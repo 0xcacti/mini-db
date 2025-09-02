@@ -30,14 +30,12 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
     return STATUS_ERROR;
   }
 
-  // Make a copy of the input string since strtok modifies it
   size_t len = strlen(addstring);
   char *buf = malloc(len + 1);
   if (buf == NULL)
     return STATUS_ERROR;
   strcpy(buf, addstring);
 
-  // Parse the comma-separated values
   char *name = strtok(buf, ",");
   if (name == NULL) {
     free(buf);
@@ -56,22 +54,18 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
     return STATUS_ERROR;
   }
 
-  // Convert hours to integer
   int hours = atoi(hours_str);
   if (hours < 0) {
     free(buf);
     return STATUS_ERROR;
   }
 
-  // Allocate or reallocate the employees array
   size_t new_size = (size_t)(dbhdr->count + 1) * sizeof(struct employee_t);
   struct employee_t *new_employees;
 
   if (*employees == NULL) {
-    // First time allocation
     new_employees = malloc(new_size);
   } else {
-    // Expand existing array
     new_employees = realloc(*employees, new_size);
   }
 
@@ -82,25 +76,15 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
 
   *employees = new_employees;
 
-  // Get pointer to the new employee slot
   struct employee_t *new_emp = &(*employees)[dbhdr->count];
 
-  // Clear the memory first
   memset(new_emp, 0, sizeof(struct employee_t));
-
-  // Copy the data safely
-  // Copy the data safely
   strncpy(new_emp->name, name, sizeof(new_emp->name) - 1);
   new_emp->name[sizeof(new_emp->name) - 1] = '\0';
-
   strncpy(new_emp->address, addr, sizeof(new_emp->address) - 1);
   new_emp->address[sizeof(new_emp->address) - 1] = '\0';
-
   new_emp->hours = (unsigned int)hours;
-
-  // Increment count
   dbhdr->count++;
-
   free(buf);
   return STATUS_SUCCESS;
 }
