@@ -9,30 +9,6 @@
 #include "common.h"
 #include "parse.h"
 
-// void list_employees(struct dbheader_t *dbhdr, struct employee_t **employees)
-// {
-//   if (!dbhdr || !employees) {
-//     fprintf(stderr, "Invalid argument(s) to list_employees\n");
-//     return;
-//   }
-//
-//   if (dbhdr->count == 0) {
-//     printf("No employees to list.\n");
-//     return;
-//   }
-//
-//   if (!*employees) {
-//     fprintf(stderr, "Employee array is NULL but count is %d\n",
-//     dbhdr->count); return;
-//   }
-//
-//   for (int i = 0; i < dbhdr->count; i++) {
-//     printf("Employee %d:\n", i);
-//     printf("\tName: %s\n", (*employees)[i].name);
-//     printf("\tAddress: %s\n", (*employees)[i].address);
-//     printf("\tHours: %u\n", (*employees)[i].hours);
-//   }
-// }
 void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
   if (!dbhdr || !employees) {
     return;
@@ -46,8 +22,7 @@ void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
   }
 }
 
-int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
-                 char *addstring) {
+int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees, char *addstring) {
   if (!dbhdr || !employees || !addstring) {
     fprintf(stderr, "Invalid argument(s) to add_employee\n");
     return STATUS_ERROR;
@@ -55,8 +30,7 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
 
   size_t len = strlen(addstring);
   char *buf = malloc(len + 1);
-  if (buf == NULL)
-    return STATUS_ERROR;
+  if (buf == NULL) return STATUS_ERROR;
   strcpy(buf, addstring);
 
   char *name = strtok(buf, ",");
@@ -112,10 +86,8 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
   return STATUS_SUCCESS;
 }
 
-int find_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
-                  char *matchstring) {
-  if (!employees || !*employees)
-    return STATUS_ERROR;
+int find_employee(struct dbheader_t *dbhdr, struct employee_t **employees, char *matchstring) {
+  if (!employees || !*employees) return STATUS_ERROR;
 
   for (int i = 0; i < dbhdr->count; i++) {
     if (strcmp((*employees)[i].name, matchstring) == 0) {
@@ -125,8 +97,7 @@ int find_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
   return STATUS_ERROR;
 }
 
-int remove_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
-                    char *removestring) {
+int remove_employee(struct dbheader_t *dbhdr, struct employee_t **employees, char *removestring) {
   int emp_index = find_employee(dbhdr, employees, removestring);
   if (emp_index < 0) {
     fprintf(stderr, "employee not found\n");
@@ -140,7 +111,8 @@ int remove_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
 }
 
 int update_employee_hours(struct dbheader_t *dbhdr,
-                          struct employee_t **employees, char *updatestring) {
+                          struct employee_t **employees,
+                          char *updatestring) {
   char *name = strtok(updatestring, ",");
   char *hours_str = strtok(NULL, ",");
   int emp_index = find_employee(dbhdr, employees, name);
@@ -158,8 +130,7 @@ int update_employee_hours(struct dbheader_t *dbhdr,
   return STATUS_SUCCESS;
 }
 
-int read_employees(int fd, struct dbheader_t *dbhdr,
-                   struct employee_t **employeesOut) {
+int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut) {
   int count = dbhdr->count;
   *employeesOut = NULL;
 
@@ -188,16 +159,12 @@ int read_employees(int fd, struct dbheader_t *dbhdr,
   for (int i = 0; i < count; i++) {
     employees[i].hours = ntohl(employees[i].hours);
   }
-
   *employeesOut = employees;
-
   return STATUS_SUCCESS;
 }
 
-int output_file(int fd, struct dbheader_t *dbhdr,
-                struct employee_t *employees) {
-  if (fd < 0)
-    return STATUS_ERROR;
+int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) {
+  if (fd < 0) return STATUS_ERROR;
 
   int realcount = dbhdr->count;
   dbhdr->filesize = sizeof *dbhdr + realcount * sizeof *employees;
@@ -209,14 +176,12 @@ int output_file(int fd, struct dbheader_t *dbhdr,
   hdr.version = htons(hdr.version);
 
   lseek(fd, 0, SEEK_SET);
-  if (write(fd, &hdr, sizeof hdr) != sizeof hdr)
-    return STATUS_ERROR;
+  if (write(fd, &hdr, sizeof hdr) != sizeof hdr) return STATUS_ERROR;
 
   for (int i = 0; i < realcount; i++) {
     struct employee_t e = employees[i];
     e.hours = htonl(e.hours);
-    if (write(fd, &e, sizeof e) != sizeof e)
-      return STATUS_ERROR;
+    if (write(fd, &e, sizeof e) != sizeof e) return STATUS_ERROR;
   }
   return STATUS_SUCCESS;
 }
@@ -233,8 +198,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
     return STATUS_ERROR;
   }
 
-  if (read(fd, header, sizeof(struct dbheader_t)) !=
-      sizeof(struct dbheader_t)) {
+  if (read(fd, header, sizeof(struct dbheader_t)) != sizeof(struct dbheader_t)) {
     perror("read");
     free(header);
     return STATUS_ERROR;
@@ -256,7 +220,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
     free(header);
     return STATUS_ERROR;
   }
-  struct stat dbstat = {0};
+  struct stat dbstat = { 0 };
   fstat(fd, &dbstat);
   if (header->filesize != dbstat.st_size) {
     fprintf(stderr, "corrupted database\n");
@@ -264,7 +228,6 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
     return STATUS_ERROR;
   }
   *headerOut = header;
-
   return 0;
 }
 
@@ -284,7 +247,6 @@ int create_db_header(struct dbheader_t **headerOut) {
   header->magic = HEADER_MAGIC;
   header->count = 0;
   header->filesize = sizeof(struct dbheader_t);
-
   *headerOut = header;
 
   return STATUS_SUCCESS;

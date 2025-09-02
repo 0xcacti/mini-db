@@ -114,8 +114,7 @@ int main(int argc, char *argv[]) {
       close(dbfd);
       return -1;
     }
-    int new_filesize =
-        sizeof(struct dbheader_t) + (dbhdr->count * sizeof(struct employee_t));
+    int new_filesize = sizeof(struct dbheader_t) + (dbhdr->count * sizeof(struct employee_t));
     if (ftruncate(dbfd, new_filesize) != 0) {
       fprintf(stderr, "error truncating database file\n");
       close(dbfd);
@@ -124,8 +123,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (updateString != NULL) {
-    if (update_employee_hours(dbhdr, &employees, updateString) !=
-        STATUS_SUCCESS) {
+    if (update_employee_hours(dbhdr, &employees, updateString) != STATUS_SUCCESS) {
       fprintf(stderr, "error updating employee in database\n");
       close(dbfd);
       return -1;
