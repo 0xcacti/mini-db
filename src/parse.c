@@ -69,55 +69,85 @@ void list_employees(struct dbheader_t *dbhdr, struct employee_t **employees) {
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
                  char *addstring) {
-  if (!dbhdr || !employees || !addstring)
+  // Most defensive null checks possible
+  if (dbhdr == NULL)
+    return STATUS_ERROR;
+  if (employees == NULL)
+    return STATUS_ERROR; // employees pointer itself is NULL
+  if (addstring == NULL)
     return STATUS_ERROR;
 
-  char *buf = strdup(addstring);
-  if (!buf)
+  // Make a copy of the input string since strtok modifies it
+  size_t len = strlen(addstring);
+  char *buf = malloc(len + 1);
+  if (buf == NULL)
     return STATUS_ERROR;
+  strcpy(buf, addstring);
 
+  // Parse the comma-separated values
   char *name = strtok(buf, ",");
+  if (name == NULL) {
+    free(buf);
+    return STATUS_ERROR;
+  }
+
   char *addr = strtok(NULL, ",");
+  if (addr == NULL) {
+    free(buf);
+    return STATUS_ERROR;
+  }
+
   char *hours_str = strtok(NULL, ",");
-  if (!name || !addr || !hours_str) {
+  if (hours_str == NULL) {
     free(buf);
     return STATUS_ERROR;
   }
 
-  // Handle the initial NULL case explicitly
-  struct employee_t *tmp;
+  // Convert hours to integer
+  int hours = atoi(hours_str);
+  if (hours < 0) {
+    free(buf);
+    return STATUS_ERROR;
+  }
+
+  // Allocate or reallocate the employees array
+  size_t new_size = (size_t)(dbhdr->count + 1) * sizeof(struct employee_t);
+  struct employee_t *new_employees;
+
   if (*employees == NULL) {
-    tmp = malloc(sizeof(struct employee_t));
+    // First time allocation
+    new_employees = malloc(new_size);
   } else {
-    size_t new_count = (size_t)dbhdr->count + 1;
-    tmp = realloc(*employees, new_count * sizeof(struct employee_t));
+    // Expand existing array
+    new_employees = realloc(*employees, new_size);
   }
 
-  if (!tmp) {
+  if (new_employees == NULL) {
     free(buf);
     return STATUS_ERROR;
   }
-  *employees = tmp;
 
-  struct employee_t *e = &(*employees)[dbhdr->count];
+  *employees = new_employees;
 
-  // Zero out the struct first to be safe
-  memset(e, 0, sizeof(struct employee_t));
+  // Get pointer to the new employee slot
+  struct employee_t *new_emp = &(*employees)[dbhdr->count];
 
-  strncpy(e->name, name, sizeof(e->name) - 1);
-  e->name[sizeof(e->name) - 1] = '\0';
-  strncpy(e->address, addr, sizeof(e->address) - 1);
-  e->address[sizeof(e->address) - 1] = '\0';
+  // Clear the memory first
+  memset(new_emp, 0, sizeof(struct employee_t));
 
-  char *endp = NULL;
-  long parsed = strtol(hours_str, &endp, 10);
-  if (endp == hours_str || *endp != '\0' || parsed < 0) {
-    free(buf);
-    return STATUS_ERROR;
-  }
-  e->hours = (unsigned int)parsed;
+  // Copy the data safely
+  // Copy the data safely
+  strncpy(new_emp->name, name, sizeof(new_emp->name) - 1);
+  new_emp->name[sizeof(new_emp->name) - 1] = '\0';
 
+  strncpy(new_emp->address, addr, sizeof(new_emp->address) - 1);
+  new_emp->address[sizeof(new_emp->address) - 1] = '\0';
+
+  new_emp->hours = (unsigned int)hours;
+
+  // Increment count
   dbhdr->count++;
+
   free(buf);
   return STATUS_SUCCESS;
 }
