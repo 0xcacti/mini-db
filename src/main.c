@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (removeString != NULL) {
-    if (remove_employee(dbhdr, employees, removeString) != STATUS_SUCCESS) {
+    if (remove_employee(dbhdr, &employees, removeString) != STATUS_SUCCESS) {
       fprintf(stderr, "error removing employee from database\n");
       close(dbfd);
       return -1;
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (updateString != NULL) {
-    if (update_employee_hours(dbhdr, employees, updateString) !=
+    if (update_employee_hours(dbhdr, &employees, updateString) !=
         STATUS_SUCCESS) {
       fprintf(stderr, "error updating employee in database\n");
       close(dbfd);

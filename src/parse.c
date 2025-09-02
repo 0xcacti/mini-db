@@ -107,18 +107,43 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
   return STATUS_SUCCESS;
 }
 
-int find_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
+// int find_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
+//                   char *matchstring) {
+//   for (int i = 0; i < dbhdr->count; i++) {
+//     if (strcmp(employees[i].name, matchstring) == 0) {
+//       return i;
+//     }
+//   }
+//
+//   return STATUS_ERROR;
+// }
+int find_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
                   char *matchstring) {
+  if (!employees || !*employees)
+    return STATUS_ERROR;
+
   for (int i = 0; i < dbhdr->count; i++) {
-    if (strcmp(employees[i].name, matchstring) == 0) {
+    if (strcmp((*employees)[i].name, matchstring) == 0) {
       return i;
     }
   }
-
   return STATUS_ERROR;
 }
 
-int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
+// int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
+//                     char *removestring) {
+//   int emp_index = find_employee(dbhdr, employees, removestring);
+//   if (emp_index < 0) {
+//     fprintf(stderr, "employee not found\n");
+//     return STATUS_ERROR;
+//   }
+//
+//   employees[emp_index] = employees[dbhdr->count - 1];
+//   dbhdr->count--;
+//
+//   return STATUS_SUCCESS;
+// }
+int remove_employee(struct dbheader_t *dbhdr, struct employee_t **employees,
                     char *removestring) {
   int emp_index = find_employee(dbhdr, employees, removestring);
   if (emp_index < 0) {
@@ -126,7 +151,7 @@ int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
     return STATUS_ERROR;
   }
 
-  employees[emp_index] = employees[dbhdr->count - 1];
+  (*employees)[emp_index] = (*employees)[dbhdr->count - 1];
   dbhdr->count--;
 
   return STATUS_SUCCESS;
@@ -150,37 +175,23 @@ int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees,
 //   employees[emp_index].hours = new_hours;
 //   return STATUS_SUCCESS;
 // }
+
 int update_employee_hours(struct dbheader_t *dbhdr,
-                          struct employee_t *employees, char *updatestring) {
-  if (!dbhdr || !employees || !updatestring)
-    return STATUS_ERROR;
-
-  char *buf = strdup(updatestring);
-  if (!buf)
-    return STATUS_ERROR;
-
-  char *name = strtok(buf, ",");
+                          struct employee_t **employees, char *updatestring) {
+  char *name = strtok(updatestring, ",");
   char *hours_str = strtok(NULL, ",");
-  if (!name || !hours_str) {
-    free(buf);
+  int emp_index = find_employee(dbhdr, employees, name);
+  if (emp_index < 0) {
+    fprintf(stderr, "employee not found\n");
+    return STATUS_ERROR;
+  }
+  int new_hours = atoi(hours_str);
+  if (new_hours < 0) {
+    fprintf(stderr, "invalid hours\n");
     return STATUS_ERROR;
   }
 
-  int idx = find_employee(dbhdr, employees, name);
-  if (idx < 0) {
-    free(buf);
-    return STATUS_ERROR;
-  }
-
-  char *endp = NULL;
-  long parsed = strtol(hours_str, &endp, 10);
-  if (endp == hours_str || *endp != '\0' || parsed < 0) {
-    free(buf);
-    return STATUS_ERROR;
-  }
-
-  employees[idx].hours = (unsigned int)parsed;
-  free(buf);
+  (*employees)[emp_index].hours = new_hours;
   return STATUS_SUCCESS;
 }
 
