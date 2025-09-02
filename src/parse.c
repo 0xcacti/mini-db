@@ -15,6 +15,11 @@ void list_employees(struct dbheader_t *dbhdr, struct employee_t **employees) {
     return;
   }
 
+  if (dbhdr->count == 0) {
+    printf("No employees to list.\n");
+    return;
+  }
+
   if (!*employees) {
     fprintf(stderr, "Employee array is NULL but count is %d\n", dbhdr->count);
     return;
