@@ -7,3 +7,4 @@ rm meow
 echo ""
 ./bin/dbview -f "meow" -r "kevin"
 ./bin/dbview -f "meow" -u "timmy,38" -l
+rm meow
