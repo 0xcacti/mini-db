@@ -26,3 +26,12 @@ int find_slot_by_fd(clientstate_t *states, int fd) {
   }
   return -1; // Not found
 }
+
+void handle_client_fsm(struct dbheader_t *dbhdr,
+                       struct employee_t **employees,
+                       clientstate_t *client) {
+  dbproto_hdr_t *hdr = (dbproto_hdr_t *)client->buffer;
+
+  if (client->state == STATE_NEW) {
+  }
+}
