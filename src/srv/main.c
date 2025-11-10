@@ -137,7 +137,6 @@ int main(int argc, char *argv[]) {
   char *portarg = NULL;
   unsigned short port = 0;
   bool newfile = false;
-  bool list = false;
   int c = 0;
 
   int dbfd = -1;
@@ -158,9 +157,6 @@ int main(int argc, char *argv[]) {
       if (port == 0) {
         printf("Invalid port number: %s\n", portarg);
       }
-      break;
-    case 'l':
-      list = true;
       break;
     case '?':
       printf("Unknown option: -%c\n", optopt);
