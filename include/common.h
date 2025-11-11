@@ -5,6 +5,7 @@
 
 #define STATUS_ERROR -1
 #define STATUS_SUCCESS 0
+#define PROTO_VER 100
 
 typedef enum {
   MSG_HELLO_REQ,

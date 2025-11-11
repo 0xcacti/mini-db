@@ -1,4 +1,7 @@
-#include <srvpoll.h>
+#include "srvpoll.h"
+#include "common.h"
+#include <arpa/inet.h>
+#include <stdio.h>
 #include <string.h>
 
 void init_clients(clientstate_t *states) {
@@ -31,7 +34,21 @@ void handle_client_fsm(struct dbheader_t *dbhdr,
                        struct employee_t **employees,
                        clientstate_t *client) {
   dbproto_hdr_t *hdr = (dbproto_hdr_t *)client->buffer;
+  hdr->type = ntohl(hdr->type);
+  hdr->length = ntohl(hdr->length);
 
-  if (client->state == STATE_NEW) {
+  if (client->state == STATE_HELLO) {
+    if (hdr->type != MSG_HELLO_REQ || hdr->length == 1) {
+      printf("Didn't get MSG_HELLO_REQ\n");
+    }
+    dbproto_hello_req_t *hello_req = (dbproto_hello_req_t *)&hdr[1];
+    hello_req->proto = ntohs(hello_req->proto);
+    if (hello_req->proto != PROTO_VER) {
+      printf("Protocol mismatch\n");
+    }
+    client->state = STATE_MSG;
+  }
+
+  if (client->state == STATE_MSG) {
   }
 }
