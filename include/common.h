@@ -40,6 +40,6 @@ typedef struct {
   char name[256];
   char address[256];
   unsigned int hours; 
-} dbproto_employee_add_resp_t;
+} dbproto_employee_list_resp_t;
 
 #endif

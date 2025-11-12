@@ -62,6 +62,28 @@ void fsm_reply_add(clientstate_t *client, dbproto_hdr_t *hdr) {
   write(client->fd, client->buffer, sizeof(dbproto_hdr_t));
 }
 
+void send_employees(struct dbheader_t *dbhdr,
+                    struct employee_t **employees,
+                    clientstate_t *client) {
+
+  dbproto_hdr_t *hdr = (dbproto_hdr_t *)client->buffer;
+  hdr->type = htonl((uint16_t)MSG_EMPLOYEE_LIST_RESP);
+  hdr->length = htons((uint16_t)dbhdr->count);
+
+  write(client->fd, client->buffer, sizeof(dbproto_hdr_t));
+  dbproto_employee_list_resp_t *current_employee = (dbproto_employee_list_resp_t *)(hdr + 1);
+  struct employee_t *employees_array = *employees;
+
+  for (int i = 0; i < dbhdr->count; i++) {
+    strncpy(current_employee->name, employees_array[i].name, sizeof(current_employee->name) - 1);
+    strncpy(current_employee->address,
+            employees_array[i].address,
+            sizeof(current_employee->address) - 1);
+    current_employee->hours = htonl(employees_array[i].hours);
+    write(client->fd, current_employee, sizeof(dbproto_employee_list_resp_t));
+  }
+}
+
 void handle_client_fsm(int dbfd,
                        struct dbheader_t *dbhdr,
                        struct employee_t **employees,
@@ -98,6 +120,11 @@ void handle_client_fsm(int dbfd,
         fsm_reply_add(client, hdr);
         output_file(dbfd, dbhdr, *employees);
       }
+    }
+
+    if (hdr->type == MSG_EMPLOYEE_LIST_REQ) {
+      printf("Listing employees\n");
+      send_employees(dbhdr, employees, client);
     }
   }
 }

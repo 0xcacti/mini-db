@@ -70,7 +70,7 @@ int list_employees(int fd) {
   char buf[4096] = { 0 };
   dbproto_hdr_t *hdr = (dbproto_hdr_t *)buf;
   hdr->type = htonl((uint16_t)MSG_EMPLOYEE_LIST_REQ);
-  hdr->length = htons((uint16_t)1);
+  hdr->length = htons((uint16_t)0);
 
   write(fd, hdr, sizeof(dbproto_hdr_t));
   read(fd, buf, sizeof(buf));
@@ -83,6 +83,17 @@ int list_employees(int fd) {
     close(fd);
     return STATUS_ERROR;
   }
+
+  if (hdr->type == MSG_EMPLOYEE_LIST_RESP) {
+    printf("Employee List:\n");
+    dbproto_employee_list_resp_t *employee = (dbproto_employee_list_resp_t *)(hdr + 1);
+    for (int i = 0; i < hdr->length; i++) {
+      read(fd, employee, sizeof(dbproto_employee_list_resp_t));
+      printf("%s, %s, %d\n", employee->name, employee->address, ntohl(employee->hours));
+    }
+  }
+
+  return STATUS_SUCCESS;
 }
 
 int main(int argc, char *argv[]) {
