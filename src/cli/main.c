@@ -1,6 +1,7 @@
 #include "common.h"
 #include <arpa/inet.h>
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -65,14 +66,34 @@ int send_employee(int fd, char *addarg) {
   return STATUS_SUCCESS;
 }
 
+int list_employees(int fd) {
+  char buf[4096] = { 0 };
+  dbproto_hdr_t *hdr = (dbproto_hdr_t *)buf;
+  hdr->type = htonl((uint16_t)MSG_EMPLOYEE_LIST_REQ);
+  hdr->length = htons((uint16_t)1);
+
+  write(fd, hdr, sizeof(dbproto_hdr_t));
+  read(fd, buf, sizeof(buf));
+
+  hdr->type = ntohl(hdr->type);
+  hdr->length = ntohs(hdr->length);
+
+  if (hdr->type == MSG_ERROR) {
+    printf("error listing employees\n");
+    close(fd);
+    return STATUS_ERROR;
+  }
+}
+
 int main(int argc, char *argv[]) {
   char *addarg = NULL;
   char *portarg = NULL;
   char *hostarg = NULL;
+  bool list = false;
   unsigned short port = 0;
 
   int c;
-  while ((c = getopt(argc, argv, "p:h:a:")) != -1) {
+  while ((c = getopt(argc, argv, "p:h:a:l")) != -1) {
     switch (c) {
     case 'a':
       addarg = optarg;
@@ -83,6 +104,9 @@ int main(int argc, char *argv[]) {
       break;
     case 'h':
       hostarg = optarg;
+      break;
+    case 'l':
+      list = true;
       break;
     case '?':
       printf("Unknown option: %c\n", optopt);
@@ -123,8 +147,14 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if (addarg) {
-    send_employee(fd, addarg);
+  if (addarg && send_employee(fd, addarg) != STATUS_SUCCESS) {
+    close(fd);
+    exit(EXIT_FAILURE);
+  }
+
+  if (list && list_employees(fd) != STATUS_SUCCESS) {
+    close(fd);
+    exit(EXIT_FAILURE);
   }
 
   close(fd);
