@@ -25,7 +25,10 @@ void print_usage(char *argv[]) {
   return;
 }
 
-void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t *employees) {
+void poll_loop(int dbfd,
+               unsigned short port,
+               struct dbheader_t *dbhdr,
+               struct employee_t *employees) {
   int listen_fd, conn_fd, free_slot;
   struct sockaddr_in server_addr, client_addr;
   socklen_t client_len = sizeof(client_addr);
@@ -125,7 +128,7 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
             printf("Client on fd %d disconnected\n", fd);
           }
         } else {
-          handle_client_fsm(dbhdr, &employees, &clients[slot]);
+          handle_client_fsm(dbfd, dbhdr, &employees, &clients[slot]);
         }
       }
     }
@@ -206,7 +209,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  poll_loop(port, dbhdr, employees);
+  poll_loop(dbfd, port, dbhdr, employees);
 
   int status = output_file(dbfd, dbhdr, employees);
   if (status != STATUS_SUCCESS) {

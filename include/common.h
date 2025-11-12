@@ -32,4 +32,14 @@ typedef struct {
   uint16_t proto;
 } dbproto_hello_resp_t;
 
+typedef struct {
+  uint8_t data[1024];
+} dbproto_employee_add_req_t;
+
+typedef struct {
+  char name[256];
+  char address[256];
+  unsigned int hours; 
+} dbproto_employee_add_resp_t;
+
 #endif

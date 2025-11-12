@@ -26,6 +26,6 @@ typedef struct {
 void init_clients(clientstate_t* states);
 int find_free_slot(clientstate_t* states);
 int find_slot_by_fd(clientstate_t* states, int fd);
-void handle_client_fsm(struct dbheader_t *dbhdr, struct employee_t **employees, clientstate_t *client);
+void handle_client_fsm(int dbfd, struct dbheader_t *dbhdr, struct employee_t **employees, clientstate_t *client);
 
 #endif

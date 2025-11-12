@@ -3,6 +3,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -31,6 +32,36 @@ int send_hello(int fd) {
   }
 
   printf("Connected to server on protocol: v%d\n", PROTO_VER);
+  return STATUS_SUCCESS;
+}
+
+int send_employee(int fd, char *addarg) {
+  char buf[4096] = { 0 };
+  dbproto_hdr_t *hdr = (dbproto_hdr_t *)buf;
+  hdr->type = htonl((uint16_t)MSG_EMPLOYEE_ADD_REQ);
+  hdr->length = htons((uint16_t)1);
+
+  dbproto_employee_add_req_t *employee = (dbproto_employee_add_req_t *)(hdr + 1);
+  size_t input_len = strlen(addarg);
+  if (input_len > sizeof employee->data) {
+    input_len = sizeof employee->data;
+  }
+  memcpy(employee->data, addarg, input_len);
+  write(fd, hdr, sizeof(dbproto_hdr_t) + sizeof(dbproto_employee_add_req_t));
+  read(fd, buf, sizeof(buf));
+
+  hdr->type = ntohl(hdr->type);
+  hdr->length = ntohl(hdr->length);
+  if (hdr->type == MSG_ERROR) {
+    printf("improper format for add employee string\n");
+    close(fd);
+    return STATUS_ERROR;
+  }
+
+  if (hdr->type == MSG_EMPLOYEE_ADD_RESP) {
+    printf("Employee added successfully\n");
+  }
+
   return STATUS_SUCCESS;
 }
 
@@ -90,6 +121,10 @@ int main(int argc, char *argv[]) {
   if (send_hello(fd) != STATUS_SUCCESS) {
     close(fd);
     exit(EXIT_FAILURE);
+  }
+
+  if (addarg) {
+    send_employee(fd, addarg);
   }
 
   close(fd);
