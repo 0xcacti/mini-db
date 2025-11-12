@@ -80,6 +80,7 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
         ii++;
       }
     }
+    nfds = ii;
     int n_events = poll(fds, nfds, -1);
     if (n_events < 0) {
       perror("poll");
@@ -98,7 +99,7 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
       free_slot = find_free_slot(clients);
       if (free_slot != -1) {
         clients[free_slot].fd = conn_fd;
-        clients[free_slot].state = STATE_CONNECTED;
+        clients[free_slot].state = STATE_HELLO;
         memset(clients[free_slot].buffer, '\0', BUFF_SIZE);
       } else {
         printf("Max clients reached, rejecting connection\n");
@@ -122,7 +123,6 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
             clients[slot].fd = -1;
             clients[slot].state = STATE_DISCONNECTED;
             printf("Client on fd %d disconnected\n", fd);
-            nfds--;
           }
         } else {
           handle_client_fsm(dbhdr, &employees, &clients[slot]);
