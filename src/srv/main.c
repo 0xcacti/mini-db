@@ -205,4 +205,14 @@ int main(int argc, char *argv[]) {
     printf("Failed to read employees");
     return -1;
   }
+
+  poll_loop(port, dbhdr, employees);
+
+  int status = output_file(dbfd, dbhdr, employees);
+  if (status != STATUS_SUCCESS) {
+    fprintf(stderr, "error writing to database");
+    return -1;
+  }
+
+  close(dbfd);
 }

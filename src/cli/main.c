@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   struct sockaddr_in server_info = { 0 };
   server_info.sin_family = AF_INET;
   server_info.sin_addr.s_addr = inet_addr(argv[1]);
-  server_info.sin_port = htons(8080);
+  server_info.sin_port = htons(8081);
 
   int fd = socket(AF_INET, SOCK_STREAM, 0);
   if (fd < 0) {
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     close(fd);
     exit(EXIT_FAILURE);
   }
-  close(fd);
 
+  close(fd);
   return 0;
 }

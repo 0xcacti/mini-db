@@ -47,6 +47,7 @@ void handle_client_fsm(struct dbheader_t *dbhdr,
       printf("Protocol mismatch\n");
     }
     client->state = STATE_MSG;
+    printf("Client upgraded to STATE_MSG\n");
   }
 
   if (client->state == STATE_MSG) {
