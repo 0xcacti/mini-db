@@ -183,6 +183,11 @@ int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) 
     e.hours = htonl(e.hours);
     if (write(fd, &e, sizeof e) != sizeof e) return STATUS_ERROR;
   }
+
+  dbhdr->magic = ntohl(hdr.magic);
+  dbhdr->filesize = ntohl(hdr.filesize);
+  dbhdr->count = ntohs(hdr.count);
+  dbhdr->version = ntohs(hdr.version);
   return STATUS_SUCCESS;
 }
 
