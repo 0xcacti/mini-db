@@ -1,0 +1,26 @@
+[
+ {
+  "directory": "/Users/t/code/c/mini-db",
+  "arguments": [
+   "gcc",
+   "-c",
+   "src/main.c",
+   "-o",
+   "obj/main.o",
+   "-Iinclude"
+  ],
+  "file": "src/main.c"
+ },
+ {
+  "directory": "/Users/t/code/c/mini-db",
+  "arguments": [
+   "gcc",
+   "-c",
+   "src/tcp.c",
+   "-o",
+   "obj/tcp.o",
+   "-Iinclude"
+  ],
+  "file": "src/tcp.c"
+ }
+]
