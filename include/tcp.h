@@ -15,11 +15,10 @@ typedef enum {
 
 typedef struct {
     int socket_fd;
-
     struct sockaddr_in address;
 } tcp_server;
 
 server_status_e bind_tcp_port(tcp_server *server, int port);
 int accept_client(int server_fd);
 
-#endif
+#endif 
