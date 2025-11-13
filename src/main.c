@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 int main() {
-  tcp_server_t server = { 0 };
+  tcp_server server = { 0 };
   server_status_e status = bind_tcp_port(&server, 8080);
   if (status != SERVER_OK) {
     fprintf(stderr, "server init failed\n");
