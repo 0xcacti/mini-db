@@ -18,6 +18,8 @@ http_parse_e read_http_request(int socket_fd, http_request *request) {
     return HTTP_PARSE_INVALID;
   }
 
+  request->methode = http_method_to_enum(request->method);
+
   return HTTP_PARSE_OK;
 }
 
