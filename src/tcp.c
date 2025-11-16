@@ -13,6 +13,12 @@ server_status_e bind_tcp_port(tcp_server *server, int port) {
   server->address.sin_addr.s_addr = INADDR_ANY;
   server->address.sin_port = htons(port);
 
+  if (port < 0 || port > 65535) {
+    fprintf(stderr, "Invalid port number: %d\n", port);
+    close(server->socket_fd);
+    return SERVER_BIND_ERROR;
+  }
+
   if (bind(server->socket_fd, (struct sockaddr *)&server->address, sizeof(server->address))) {
     perror("bind");
     close(server->socket_fd);
