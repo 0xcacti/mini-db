@@ -137,14 +137,5 @@ http_parse_e parse_http_headers(const char *raw_request, http_request *request) 
 }
 
 void free_http_headers(http_request *request) {
-  if (request == NULL) {
-    return;
-  }
-
-  free(request->headers);
-  request->headers = NULL;
-  request->header_count = 0;
-
-  free(request->buffer);
-  request->buffer = NULL;
+  (void)request;
 }
