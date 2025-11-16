@@ -1,5 +1,6 @@
 #include "http.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -40,10 +41,51 @@ http_method_e http_method_to_enum(const char *method_str) {
   }
 }
 
-void free_http_headers(http_request *request) {
-  return;
+void parse_http_headers(const char *raw_request, http_request *request) {
+  const char *line_start = strstr(raw_request, "\r\n");
+  if (!line_start) return;
+
+  line_start += 2; // Skip the request line
+  while (line_start && *line_start && *line_start != '\r' && *line_start != '\n') {
+    const char *line_end = strstr(line_start, "\r\n");
+    if (!line_end) break;
+
+    size_t line_length = line_end - line_start;
+    char line[1024] = { 0 };
+    strncpy(line, line_start, line_length);
+
+    char *colon_pos = strchr(line, ':');
+    if (colon_pos) {
+      *colon_pos = '\0';
+      const char *key = line;
+      const char *value = colon_pos + 1;
+
+      while (*value == ' ')
+        value++; // Skip leading spaces
+
+      request->headers =
+          realloc(request->headers, sizeof(http_header_t) * (request->header_count + 1));
+      if (!request->headers) {
+        perror("Failed to allocate memory for headers");
+        exit(1);
+      }
+
+      strncpy(request->headers[request->header_count].key,
+              key,
+              sizeof(request->headers[request->header_count].key) - 1);
+      strncpy(request->headers[request->header_count].value,
+              value,
+              sizeof(request->headers[request->header_count].value) - 1);
+
+      request->header_count++;
+    }
+
+    line_start = line_end + 2;
+  }
 }
 
-http_parse_e parse_http_headers(const char *buff, http_request *request) {
-  return HTTP_PARSE_OK;
+void free_http_headers(http_request *request) {
+  free(request->headers);
+  request->headers = NULL;
+  request->header_count = 0;
 }
