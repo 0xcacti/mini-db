@@ -14,7 +14,7 @@ http_parse_e read_http_request(int socket_fd, http_request *request) {
 
   buffer[bytes_read] = '\0';
 
-  if (sscanf(buffer, "%7s %2047s %15s", request->method, request->path, request->protocol) != 3) {
+  if (sscanf(buffer, "%8s %2047s %15s", request->method, request->path, request->protocol) != 3) {
     return HTTP_PARSE_INVALID;
   }
 
