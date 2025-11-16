@@ -25,19 +25,20 @@ typedef enum {
     HTTP_METHOD_UNK
 } http_method_e;
 
-
-typedef struct {
-    http_method_e methode;
-    char method[HTTP_METHOD_MAX_LEN];
-    char path[HTTP_PATH_MAX_LEN];
-    char protocol[HTTP_PROTOCOL_MAX_LEN];
-    char *buffer;
-} http_request;
-
 typedef struct {
     char key[256];    // Header key (e.g., "Content-Type")
     char value[512];  // Header value (e.g., "text/html")
 } http_header_t;
+
+typedef struct {
+    char method[HTTP_METHOD_MAX_LEN];
+    http_method_e methode;
+    char path[HTTP_PATH_MAX_LEN];
+    char protocol[HTTP_PROTOCOL_MAX_LEN];
+    char *buffer;
+    http_header_t *headers;
+} http_request;
+
 
 typedef struct {
     int status_code;
