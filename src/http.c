@@ -19,6 +19,12 @@ http_parse_e read_http_request(int socket_fd, http_request *request) {
   }
 
   request->methode = http_method_to_enum(request->method);
+  if (request->methode == HTTP_METHOD_UNK) {
+    request->method[0] = 'U';
+    request->method[1] = 'N';
+    request->method[2] = 'K';
+    request->method[3] = '\0';
+  }
 
   return HTTP_PARSE_OK;
 }
