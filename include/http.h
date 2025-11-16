@@ -14,13 +14,6 @@ typedef enum {
     HTTP_PARSE_INVALID
 } http_parse_e;
 
-typedef struct {
-    char method[HTTP_METHOD_MAX_LEN];
-    char path[HTTP_PATH_MAX_LEN];
-    char protocol[HTTP_PROTOCOL_MAX_LEN];
-    char *buffer;
-} http_request;
-
 typedef enum {
     HTTP_METHOD_GET,
     HTTP_METHOD_POST,
@@ -31,6 +24,15 @@ typedef enum {
     HTTP_METHOD_PATCH,
     HTTP_METHOD_UNK
 } http_method_e;
+
+
+typedef struct {
+    http_method_e methode;
+    char method[HTTP_METHOD_MAX_LEN];
+    char path[HTTP_PATH_MAX_LEN];
+    char protocol[HTTP_PROTOCOL_MAX_LEN];
+    char *buffer;
+} http_request;
 
 typedef struct {
     char key[256];    // Header key (e.g., "Content-Type")
