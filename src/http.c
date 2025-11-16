@@ -36,6 +36,8 @@ http_method_e http_method_to_enum(const char *method_str) {
     return HTTP_METHOD_OPTIONS;
   } else if (strcmp(method_str, "PATCH") == 0) {
     return HTTP_METHOD_PATCH;
+  } else if (strcmp(method_str, "UNKNOWN") == 0) {
+    return HTTP_METHOD_UNK;
   } else {
     return HTTP_METHOD_UNK;
   }
