@@ -12,7 +12,7 @@
 typedef enum {
     HTTP_PARSE_OK,
     HTTP_PARSE_INVALID
-} http_parse_status_e;
+} http_parse_e;
 
 typedef struct {
     char method[HTTP_METHOD_MAX_LEN];
