@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-int read_http_request(int socket_fd, http_request *request) {
+http_parse_e read_http_request(int socket_fd, http_request *request) {
   char buffer[8192] = { 0 };
   ssize_t bytes_read = read(socket_fd, buffer, sizeof(buffer) - 1);
 
