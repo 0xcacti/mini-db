@@ -39,3 +39,11 @@ http_method_e http_method_to_enum(const char *method_str) {
     return HTTP_METHOD_UNK;
   }
 }
+
+void free_http_headers(http_request *request) {
+  return;
+}
+
+http_parse_e parse_http_headers(const char *buff, http_request *request) {
+  return HTTP_PARSE_OK;
+}
