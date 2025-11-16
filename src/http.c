@@ -8,15 +8,34 @@ int read_http_request(int socket_fd, http_request *request) {
   ssize_t bytes_read = read(socket_fd, buffer, sizeof(buffer) - 1);
 
   if (bytes_read <= 0) {
-
-    return -1; // Reading failed or connection closed
+    return HTTP_PARSE_INVALID;
   }
 
   buffer[bytes_read] = '\0';
 
   if (sscanf(buffer, "%7s %2047s %15s", request->method, request->path, request->protocol) != 3) {
-    return -1; // Failed to parse the request line
+    return HTTP_PARSE_INVALID;
   }
 
-  return 0;
+  return HTTP_PARSE_OK;
+}
+
+http_method_e http_method_to_enum(const char *method_str) {
+  if (strcmp(method_str, "GET") == 0) {
+    return HTTP_METHOD_GET;
+  } else if (strcmp(method_str, "POST") == 0) {
+    return HTTP_METHOD_POST;
+  } else if (strcmp(method_str, "PUT") == 0) {
+    return HTTP_METHOD_PUT;
+  } else if (strcmp(method_str, "DELETE") == 0) {
+    return HTTP_METHOD_DELETE;
+  } else if (strcmp(method_str, "HEAD") == 0) {
+    return HTTP_METHOD_HEAD;
+  } else if (strcmp(method_str, "OPTIONS") == 0) {
+    return HTTP_METHOD_OPTIONS;
+  } else if (strcmp(method_str, "PATCH") == 0) {
+    return HTTP_METHOD_PATCH;
+  } else {
+    return HTTP_METHOD_UNKNOWN;
+  }
 }
