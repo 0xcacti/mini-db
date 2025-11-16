@@ -43,7 +43,7 @@ http_method_e http_method_to_enum(const char *method_str) {
 
 http_parse_e parse_http_headers(const char *raw_request, http_request *request) {
   const char *line_start = strstr(raw_request, "\r\n");
-  if (!line_start) return;
+  if (!line_start) return HTTP_PARSE_INVALID;
 
   line_start += 2; // Skip the request line
   while (line_start && *line_start && *line_start != '\r' && *line_start != '\n') {
@@ -82,6 +82,7 @@ http_parse_e parse_http_headers(const char *raw_request, http_request *request) 
 
     line_start = line_end + 2;
   }
+  return HTTP_PARSE_OK;
 }
 
 void free_http_headers(http_request *request) {
