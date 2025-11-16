@@ -1,33 +1,62 @@
 CC = gcc 
 CFLAGS = -Wall -Wextra -Iinclude -g
 
-BIN_DIR = bin
+SRC_DIR = src
 OBJ_DIR = obj
-TARGET = bin/main
-SRC = $(wildcard src/*.c)
-OBJ = $(SRC:src/%.c=obj/%.o)
+INCLUDE_DIR = include
+BIN_DIR = bin
 
-default: $(TARGET)
+TARGET = $(BIN_DIR)/myhttpd
 
-$(TARGET): $(OBJ) | bin
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ_FILES) | $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $@ $^
 
-$(OBJ): obj/%.o: src/%.c | obj
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$( BIN_DIR ):
-	mkdir -p $( BIN_DIR )
-$( OBJ_DIR ):
-	mkdir -p $( OBJ_DIR )
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-clean: 
-	rm -rf obj bin
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
-cdb:
-	@rm -f compile_commands.json
-	@compiledb --output compile_commands.json make clean default
-	@echo "✓ compile_commands.json regenerated"
+clean:
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
-.PHONY: default clean cdb
+
+
+# BIN_DIR = bin
+# OBJ_DIR = obj
+# TARGET = bin/main
+# SRC = $(wildcard src/*.c)
+# OBJ = $(SRC:src/%.c=obj/%.o)
+# 
+# default: $(TARGET)
+# 
+# $(TARGET): $(OBJ) | bin
+# 	$(CC) $(CFLAGS) -o $@ $^
+# 
+# $(OBJ): obj/%.o: src/%.c | obj
+# 	$(CC) $(CFLAGS) -c $< -o $@
+# 
+# $( BIN_DIR ):
+# 	mkdir -p $( BIN_DIR )
+# $( OBJ_DIR ):
+# 	mkdir -p $( OBJ_DIR )
+# 
+# clean: 
+# 	rm -rf obj bin
+# 
+# cdb:
+# 	@rm -f compile_commands.json
+# 	@compiledb --output compile_commands.json make clean default
+# 	@echo "✓ compile_commands.json regenerated"
+# 
+# .PHONY: default clean cdb
 
 
