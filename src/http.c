@@ -41,7 +41,7 @@ http_method_e http_method_to_enum(const char *method_str) {
   }
 }
 
-void parse_http_headers(const char *raw_request, http_request *request) {
+http_parse_e parse_http_headers(const char *raw_request, http_request *request) {
   const char *line_start = strstr(raw_request, "\r\n");
   if (!line_start) return;
 

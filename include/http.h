@@ -52,7 +52,7 @@ typedef struct {
 
 http_method_e http_method_to_enum(const char *method_str);
 http_parse_e read_http_request(int socket_fd, http_request *request);
-void parse_http_headers(const char *buff, http_request *request);
+http_parse_e parse_http_headers(const char *buff, http_request *request);
 void free_http_headers(http_request *request);
 
 #endif // HTTP_H
