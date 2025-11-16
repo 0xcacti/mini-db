@@ -18,7 +18,7 @@ typedef struct {
     char method[HTTP_METHOD_MAX_LEN];
     char path[HTTP_PATH_MAX_LEN];
     char protocol[HTTP_PROTOCOL_MAX_LEN];
-    char *buff;
+    char *buffer;
 } http_request;
 
 typedef enum {
