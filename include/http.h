@@ -27,7 +27,7 @@ typedef enum {
     HTTP_METHOD_HEAD,
     HTTP_METHOD_OPTIONS,
     HTTP_METHOD_PATCH,
-    HTTP_METHOD_UNKNOWN
+    HTTP_METHOD_UNK
 } http_method_e;
 
 typedef struct {
