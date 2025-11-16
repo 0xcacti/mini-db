@@ -37,6 +37,7 @@ typedef struct {
     char protocol[HTTP_PROTOCOL_MAX_LEN];
     char *buffer;
     http_header_t *headers;
+    int header_count;
 } http_request;
 
 
