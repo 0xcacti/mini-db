@@ -51,6 +51,7 @@ http_parse_e parse_http_headers(const char *raw_request, http_request *request) 
 
   request->headers = NULL;
   request->header_count = 0;
+  request->buffer = NULL;
 
   const char *line_start = strstr(raw_request, "\r\n");
   if (!line_start) return HTTP_PARSE_INVALID;
