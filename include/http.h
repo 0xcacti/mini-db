@@ -1,6 +1,8 @@
 #ifndef HTTP_H
 #define HTTP_H
 
+#include <stddef.h>
+
 #define HTTP_METHOD_MAX_LEN 8    // Based on maximum method length in HTTP/1.1
 #define HTTP_PATH_MAX_LEN 2048   // Practical limit for URIs
 #define HTTP_PROTOCOL_MAX_LEN 16 // Standard protocol length (e.g., HTTP/1.1)
@@ -22,6 +24,23 @@ typedef struct {
     char protocol[HTTP_PROTOCOL_MAX_LEN];
 } http_request;
 
+typedef struct {
+    char key[256];    // Header key (e.g., "Content-Type")
+    char value[512];  // Header value (e.g., "text/html")
+} http_header_t;
+
+typedef struct {
+    int status_code;
+    char reason_phrase[64];
+    http_header_t *headers;
+    size_t header_count;
+    char *body;
+    size_t body_length;
+} http_response;
+
+
 int read_http_request(int socket_fd, http_request *request);
+
+
 
 #endif // HTTP_H
