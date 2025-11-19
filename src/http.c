@@ -186,7 +186,7 @@ char *construct_http_response(const http_response *response, size_t *response_le
   }
 
   size_t offset = snprintf(
-      buffer, buffer_size, "http/1.1 %d %s\r\n", response->status_code, response->reason_phrase);
+      buffer, buffer_size, "HTTP/1.1 %d %s\r\n", response->status_code, response->reason_phrase);
 
   for (size_t i = 0; i < response->header_count; i++) {
     size_t header_len =
