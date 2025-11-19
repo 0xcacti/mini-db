@@ -148,3 +148,30 @@ void init_http_response(http_response *response) {
   response->body = NULL;
   response->body_length = 0;
 }
+
+void add_http_header(http_response *response, const char *key, const char *value) {
+  response->headers =
+      realloc(response->headers, sizeof(http_header_t) * (response->header_count + 1));
+  if (!response->headers) {
+    perror("Failed to allocate memory for response headers");
+    exit(EXIT_FAILURE);
+  }
+
+  strncpy(response->headers[response->header_count].key,
+          key,
+          sizeof(response->headers[response->header_count].key) - 1);
+  strncpy(response->headers[response->header_count].value,
+          value,
+          sizeof(response->headers[response->header_count].value) - 1);
+
+  response->header_count++;
+}
+
+void free_http_response(http_response *response) {
+  free(response->headers);
+  response->headers = NULL;
+  response->header_count = 0;
+  free(response->body);
+  response->body = NULL;
+  response->body_length = 0;
+}
