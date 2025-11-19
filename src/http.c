@@ -45,14 +45,6 @@ http_method_e http_method_to_enum(const char *method_str) {
 }
 
 http_parse_e parse_http_headers(const char *raw_request, http_request *request) {
-  if (request == NULL || raw_request == NULL) {
-    return HTTP_PARSE_INVALID;
-  }
-
-  request->headers = NULL;
-  request->header_count = 0;
-  request->buffer = NULL;
-
   const char *line_start = strstr(raw_request, "\r\n");
   if (!line_start) return HTTP_PARSE_INVALID;
 
@@ -78,7 +70,7 @@ http_parse_e parse_http_headers(const char *raw_request, http_request *request) 
           realloc(request->headers, sizeof(http_header_t) * (request->header_count + 1));
       if (!request->headers) {
         perror("Failed to allocate memory for headers");
-        exit(1);
+        exit(EXIT_FAILURE);
       }
 
       strncpy(request->headers[request->header_count].key,
@@ -93,9 +85,12 @@ http_parse_e parse_http_headers(const char *raw_request, http_request *request) 
 
     line_start = line_end + 2;
   }
+
   return HTTP_PARSE_OK;
 }
 
 void free_http_headers(http_request *request) {
-  (void)request;
+  free(request->headers);
+  request->headers = NULL;
+  request->header_count = 0;
 }
