@@ -96,22 +96,27 @@ void free_http_headers(http_request *request) {
 }
 
 http_parse_e parse_http_request(const char *raw_request, http_request *request) {
-  memset(request, 0, sizeof(http_request));
+  memset(request, 0, sizeof(*request));
 
-  if (sscanf(raw_request, "%7s %2047s %15s", request->method, request->path, request->protocol) !=
+  size_t len = strlen(raw_request);
+  if (len >= HTTP_MAX_REQUEST_LEN) {
+    len = HTTP_MAX_REQUEST_LEN - 1;
+  }
+  memcpy(request->buffer, raw_request, len);
+  request->buffer[len] = '\0';
+
+  if (sscanf(
+          request->buffer, "%7s %2047s %15s", request->method, request->path, request->protocol) !=
       3) {
     return HTTP_PARSE_INVALID;
   }
 
   request->methode = http_method_to_enum(request->method);
 
-  if (parse_http_headers(raw_request, request) != HTTP_PARSE_OK) {
+  if (parse_http_headers(request->buffer, request) != HTTP_PARSE_OK) {
     free_http_headers(request);
-    return -1;
+    return HTTP_PARSE_INVALID;
   }
-
-  memcpy(request->buffer, raw_request, sizeof(request->buffer) - 1);
-  request->buffer[sizeof(request->buffer) - 1] = '\0';
 
   return HTTP_PARSE_OK;
 }
