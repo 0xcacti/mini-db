@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #define HTTP_MAX_REQUEST_LEN 8192*4
 #define HTTP_METHOD_MAX_LEN 8
@@ -23,13 +24,6 @@ typedef enum {
     HTTP_METHOD_PUT,
     HTTP_METHOD_UNK,
 } http_method_e;
-
-typedef enum {
-    HTTP_STATUS_OK = 200,
-    HTTP_STATUS_BAD_REQUEST = 400,
-    HTTP_STATUS_NOT_FOUND = 404,
-    HTTP_STATUS_INTERNAL_SERVER_ERROR = 500,
-} http_status_e;
 
 typedef struct {
     char key[HTTP_MAX_HEADER_KEY_LEN];
