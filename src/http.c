@@ -94,3 +94,21 @@ void free_http_headers(http_request *request) {
   request->headers = NULL;
   request->header_count = 0;
 }
+
+http_status_e parse_http_request(const char *raw_request, http_request *request) {
+  memset(request, 0, sizeof(http_request));
+
+  if (sscanf(raw_request, "%7s %2047s %15s", request->method, request->path, request->protocol) !=
+      3) {
+    return -1;
+  }
+
+  request->methode = http_method_to_enum(request->method);
+
+  if (parse_http_headers(raw_request, request) != HTTP_PARSE_OK) {
+    free_http_headers(request);
+    return -1;
+  }
+
+  return HTTP_STATUS_OK;
+}
