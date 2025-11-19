@@ -4,20 +4,54 @@
 #include <string.h>
 #include <unistd.h>
 
+// http_parse_e read_http_request(int socket_fd, http_request *request) {
+//   char buffer[8192] = { 0 };
+//   ssize_t bytes_read = read(socket_fd, buffer, sizeof(buffer) - 1);
+//
+//   if (bytes_read <= 0) {
+//     return HTTP_PARSE_INVALID;
+//   }
+//
+//   buffer[bytes_read] = '\0';
+//
+//   if (sscanf(buffer, "%7s %2047s %15s", request->method, request->path, request->protocol) != 3)
+//   {
+//     return HTTP_PARSE_INVALID;
+//   }
+//
+//   return HTTP_PARSE_OK;
+// }
+
 http_parse_e read_http_request(int socket_fd, http_request *request) {
-  // char buffer[8192] = { 0 };
-  // ssize_t bytes_read = read(socket_fd, buffer, sizeof(buffer) - 1);
+  memset(request, 0, sizeof(*request));
 
-  // if (bytes_read <= 0) {
-  //   return HTTP_PARSE_INVALID;
-  // }
+  size_t total = 0;
+  while (total < HTTP_MAX_REQUEST_LEN - 1) {
+    ssize_t n = read(socket_fd, request->buffer + total, HTTP_MAX_REQUEST_LEN - 1 - total);
+    if (n < 0) {
+      return HTTP_PARSE_INVALID;
+    }
+    if (n == 0) {
+      break;
+    }
+    total += (size_t)n;
 
-  // buffer[bytes_read] = '\0';
+    if (strstr(request->buffer, "\r\n\r\n") != NULL) {
+      break;
+    }
+  }
 
-  // if (sscanf(buffer, "%7s %2047s %15s", request->method, request->path, request->protocol) != 3)
-  // {
-  //   return HTTP_PARSE_INVALID;
-  // }
+  if (total == 0) {
+    return HTTP_PARSE_INVALID;
+  }
+
+  request->buffer[total] = '\0';
+
+  if (sscanf(
+          request->buffer, "%7s %2047s %15s", request->method, request->path, request->protocol) !=
+      3) {
+    return HTTP_PARSE_INVALID;
+  }
 
   return HTTP_PARSE_OK;
 }
@@ -119,5 +153,7 @@ http_parse_e parse_http_request(const char *raw_request, http_request *request) 
     return HTTP_PARSE_INVALID;
   }
 
+  memcpy(request->buffer, raw_request, sizeof(request->buffer) - 1);
+  request->buffer[sizeof(request->buffer) - 1] = '\0';
   return HTTP_PARSE_OK;
 }
