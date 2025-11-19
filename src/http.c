@@ -11,7 +11,7 @@ extern route_t routes[];
 extern int route_count;
 
 bool handle_route(http_request *request, http_response *response) {
-  for (size_t i = 0; i < route_count; i++) {
+  for (int i = 0; i < route_count; i++) {
     if (routes[i].methode == request->methode && strcmp(routes[i].path, request->path) == 0) {
       routes[i].handler(request, response);
       return true;
