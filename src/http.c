@@ -96,7 +96,7 @@ void free_http_headers(http_request *request) {
 }
 
 http_parse_e parse_http_request(const char *raw_request, http_request *request) {
-  memset(request, 0, sizeof(*request));
+  // memset(request, 0, sizeof(*request));
 
   size_t len = strlen(raw_request);
   if (len >= HTTP_MAX_REQUEST_LEN) {
