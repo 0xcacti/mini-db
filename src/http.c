@@ -206,6 +206,8 @@ char *construct_http_response(const http_response *response, size_t *response_le
                        response->headers[i].value);
   }
 
+  offset += snprintf(buffer + offset, buffer_size - offset, "\r\n");
+
   if (response->body) {
     while (offset + response->body_length + 1 > buffer_size) {
       buffer_size += 2;
