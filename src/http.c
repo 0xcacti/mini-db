@@ -305,7 +305,8 @@ void serve_file(const char *path, http_response *response) {
   }
 
   response->body = file_content;
-  response->body_length = strlen(file_content);
+  size_t file_size = strlen(file_content);
+  response->body_length = file_size;
 
   if (strstr(path, ".html")) {
     add_http_header(response, "Content-Type", "text/html");
