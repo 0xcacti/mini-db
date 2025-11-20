@@ -1,26 +1,77 @@
 [
  {
-  "directory": "/Users/t/code/c/mini-db",
+  "directory": "/Users/t/code/c/lla",
   "arguments": [
    "gcc",
+   "-Wall",
+   "-Wextra",
+   "-Iinclude",
+   "-g",
+   "-c",
+   "src/http.c",
+   "-o",
+   "obj/http.o"
+  ],
+  "file": "src/http.c"
+ },
+ {
+  "directory": "/Users/t/code/c/lla",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-Wextra",
+   "-Iinclude",
+   "-g",
    "-c",
    "src/main.c",
    "-o",
-   "obj/main.o",
-   "-Iinclude"
+   "obj/main.o"
   ],
   "file": "src/main.c"
  },
  {
-  "directory": "/Users/t/code/c/mini-db",
+  "directory": "/Users/t/code/c/lla",
   "arguments": [
    "gcc",
+   "-Wall",
+   "-Wextra",
+   "-Iinclude",
+   "-g",
+   "-c",
+   "src/route.c",
+   "-o",
+   "obj/route.o"
+  ],
+  "file": "src/route.c"
+ },
+ {
+  "directory": "/Users/t/code/c/lla",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-Wextra",
+   "-Iinclude",
+   "-g",
    "-c",
    "src/tcp.c",
    "-o",
-   "obj/tcp.o",
-   "-Iinclude"
+   "obj/tcp.o"
   ],
   "file": "src/tcp.c"
+ },
+ {
+  "directory": "/Users/t/code/c/lla",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-Wextra",
+   "-Iinclude",
+   "-g",
+   "-c",
+   "src/util.c",
+   "-o",
+   "obj/util.o"
+  ],
+  "file": "src/util.c"
  }
 ]

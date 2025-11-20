@@ -6,7 +6,7 @@ OBJ_DIR = obj
 INCLUDE_DIR = include
 BIN_DIR = bin
 
-LD_FLAGS = -l:libcjson.a -L./lib
+LD_FLAGS = -L./lib -lcjson
 
 TARGET = $(BIN_DIR)/myhttpd
 
@@ -27,8 +27,15 @@ $(OBJ_DIR):
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
+cdb:
+	@rm -f compile_commands.json
+	@compiledb --output compile_commands.json make clean all
+	@echo "✓ compile_commands.json regenerated"
+
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
+
+.PHONY: all clean cdb
 
 
 
@@ -54,10 +61,6 @@ clean:
 # clean: 
 # 	rm -rf obj bin
 # 
-# cdb:
-# 	@rm -f compile_commands.json
-# 	@compiledb --output compile_commands.json make clean default
-# 	@echo "✓ compile_commands.json regenerated"
 # 
 # .PHONY: default clean cdb
 
