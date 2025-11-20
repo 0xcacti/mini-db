@@ -256,37 +256,56 @@ void send_http_response(int client_fd, const http_response *response) {
   free(response_data);
 }
 
+char *loadfile(const char *path) {
+  FILE *f = fopen(path, "rb+");
+  if (f == NULL) {
+    return NULL;
+  }
+
+  if (fseek(f, 0, SEEK_END) != 0) {
+    fclose(f);
+    return NULL;
+  }
+
+  long len = ftell(f);
+  if (len < 0) {
+    fclose(f);
+    return NULL;
+  }
+
+  if (fseek(f, 0, SEEK_SET) != 0) {
+    fclose(f);
+    return NULL;
+  }
+
+  char *data = malloc((size_t)len + 1);
+  if (data == NULL) {
+    fclose(f);
+    return NULL;
+  }
+
+  size_t n = fread(data, 1, (size_t)len, f);
+  fclose(f);
+
+  if (n != (size_t)len) {
+    free(data);
+    return NULL;
+  }
+
+  data[len] = '\0';
+  return data;
+}
+
 void serve_file(const char *path, http_response *response) {
-  FILE *file = fopen(path, "rb+");
-  if (!file) {
+  char *file_content = loadfile(path);
+  if (file_content == NULL) {
     response->status_code = 404;
     strncpy(response->reason_phrase, "Not Found", sizeof(response->reason_phrase) - 1);
-    const char *not_found_body = "<h1>404 Not Found</h1>";
-    response->body_length = strlen(not_found_body);
-    response->body = malloc(response->body_length);
-    memcpy(response->body, not_found_body, response->body_length);
-    add_http_header(response, "Content-Type", "text/html");
-    add_http_header(response, "Content-Length", "22");
-    return;
+    return serve_file("./www/404.html", response);
   }
-
-  fseek(file, 0, SEEK_END);
-  size_t file_size = ftell(file);
-  fseek(file, 0, SEEK_SET);
-
-  char *file_content = malloc(file_size + 1);
-  if (!file_content) {
-    perror("Failed to allocate memory for file content");
-    fclose(file);
-    exit(EXIT_FAILURE);
-  }
-
-  fread(file_content, 1, file_size, file);
-  fclose(file);
-  file_content[file_size] = '\0';
 
   response->body = file_content;
-  response->body_length = file_size;
+  response->body_length = strlen(file_content);
 
   if (strstr(path, ".html")) {
     add_http_header(response, "Content-Type", "text/html");

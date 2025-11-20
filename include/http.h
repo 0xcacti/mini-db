@@ -49,6 +49,25 @@ typedef struct {
     size_t body_length;
 } http_response;
 
+typedef enum {
+    FILE_SERVE_OK,
+    FILE_NOT_FOUND,
+    FILE_ACCESS_DENIED,
+    FILE_READ_ERROR
+} file_serve_status_e;
+
+typedef struct {
+    char mime_type[64];
+    char file_path[512];
+    long file_size;
+} file_info_t;
+
+typedef enum {
+    HANDLER_OK,
+    HANDLER_NOT_FOUND,
+    HANDLER_ERROR
+} handler_status_e;
+
 http_method_e http_method_to_enum(const char *method_str);
 http_parse_e read_http_request(int socket_fd, http_request *request);
 http_parse_e parse_http_headers(const char *buff, http_request *request);
@@ -60,5 +79,9 @@ char *construct_http_response(const http_response *response, size_t *response_le
 void free_http_response(http_response *response);
 void add_http_header(http_response *response, const char *key, const char *value);
 bool handle_request(http_request *req, http_response *res);
+
+file_serve_status_e get_file_info(const char *requested_path, const char *document_root, file_info_t *file_info);
+int serve_static_file(int client_fd, const file_info_t *file_info);
+handler_status_e handle_static_file_request(const http_request *request, http_response *response, const char *document_root);
 
 #endif 

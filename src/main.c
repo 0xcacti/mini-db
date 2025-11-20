@@ -8,46 +8,6 @@ typedef struct {
   int port;
 } server_config_t;
 
-char *loadfile(const char *path) {
-  FILE *f = fopen(path, "rb");
-  if (f == NULL) {
-    return NULL;
-  }
-
-  if (fseek(f, 0, SEEK_END) != 0) {
-    fclose(f);
-    return NULL;
-  }
-
-  long len = ftell(f);
-  if (len < 0) {
-    fclose(f);
-    return NULL;
-  }
-
-  if (fseek(f, 0, SEEK_SET) != 0) {
-    fclose(f);
-    return NULL;
-  }
-
-  char *data = malloc((size_t)len + 1);
-  if (data == NULL) {
-    fclose(f);
-    return NULL;
-  }
-
-  size_t n = fread(data, 1, (size_t)len, f);
-  fclose(f);
-
-  if (n != (size_t)len) {
-    free(data);
-    return NULL;
-  }
-
-  data[len] = '\0';
-  return data;
-}
-
 int loadConfig(server_config_t *config) {
   int status = 0;
 
