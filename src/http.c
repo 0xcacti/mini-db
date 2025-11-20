@@ -1,9 +1,24 @@
 #include "http.h"
+#include "route.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+extern route_t routes[];
+extern int route_count;
+
+bool handle_route(http_request *request, http_response *response) {
+  for (size_t i = 0; i < route_count; i++) {
+    if (routes[i].methode == request->methode && strcmp(routes[i].path, request->path) == 0) {
+      routes[i].handler(request, response);
+      return true;
+    }
+  }
+  return false;
+}
 
 http_parse_e read_http_request(int socket_fd, http_request *request) {
   memset(request, 0, sizeof(*request));
@@ -239,4 +254,64 @@ void send_http_response(int client_fd, const http_response *response) {
     total_sent += bytes_sent;
   }
   free(response_data);
+}
+
+void serve_file(const char *path, http_response *response) {
+  FILE *file = fopen(path, "rb+");
+  if (!file) {
+    response->status_code = 404;
+    strncpy(response->reason_phrase, "Not Found", sizeof(response->reason_phrase) - 1);
+    const char *not_found_body = "<h1>404 Not Found</h1>";
+    response->body_length = strlen(not_found_body);
+    response->body = malloc(response->body_length);
+    memcpy(response->body, not_found_body, response->body_length);
+    add_http_header(response, "Content-Type", "text/html");
+    add_http_header(response, "Content-Length", "22");
+    return;
+  }
+
+  fseek(file, 0, SEEK_END);
+  size_t file_size = ftell(file);
+  fseek(file, 0, SEEK_SET);
+
+  char *file_content = malloc(file_size + 1);
+  if (!file_content) {
+    perror("Failed to allocate memory for file content");
+    fclose(file);
+    exit(EXIT_FAILURE);
+  }
+
+  fread(file_content, 1, file_size, file);
+  fclose(file);
+  file_content[file_size] = '\0';
+
+  response->body = file_content;
+  response->body_length = file_size;
+
+  if (strstr(path, ".html")) {
+    add_http_header(response, "Content-Type", "text/html");
+  } else if (strstr(path, ".css")) {
+    add_http_header(response, "Content-Type", "text/css");
+  } else if (strstr(path, ".js")) {
+    add_http_header(response, "Content-Type", "application/javascript");
+  } else if (strstr(path, ".png")) {
+    add_http_header(response, "Content-Type", "image/png");
+  } else {
+    add_http_header(response, "Content-Type", "application/octet-stream");
+  }
+
+  char content_length[32];
+  snprintf(content_length, sizeof(content_length), "%zu", file_size);
+  add_http_header(response, "Content-Length", content_length);
+
+  free(file_content);
+}
+
+void sanitize_path(const char *requested_path, char *sanitized_path, size_t buffer_size) {
+  const char *web_root = "./www";
+  snprintf(sanitized_path, buffer_size, "%s%s", web_root, requested_path);
+
+  if (strstr(sanitized_path, "..")) {
+    strncpy(sanitized_path, "./www/404.html", buffer_size - 1);
+  }
 }
