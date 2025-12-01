@@ -1,6 +1,6 @@
 # LLA 
 
-This repo store projects from LLA course.  
+This repo store projects from Low Level Academy 
 
 I learned C this year, but the thing is it's very hard now to learn 
 languages with the temptation of using AI to do the work for you.
