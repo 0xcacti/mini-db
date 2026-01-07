@@ -1,4 +1,4 @@
-# Variables 
+# Variables
 TARGET_SRV = bin/dbserver
 TARGET_CLI = bin/dbcli
 SRC_SRV = $(wildcard src/srv/*.c)
@@ -11,7 +11,7 @@ default: $(TARGET_SRV) $(TARGET_CLI)
 $(TARGET_SRV): $(OBJ_SRV) | bin
 	gcc -o $@ $^
 
-$(TARGET_CLI): $(OBJ_CLI) | bin  
+$(TARGET_CLI): $(OBJ_CLI) | bin
 	gcc -o $@ $^
 
 $(OBJ_SRV): obj/srv/%.o: src/srv/%.c | obj/srv
