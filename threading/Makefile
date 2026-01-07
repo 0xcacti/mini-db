@@ -1,9 +1,9 @@
-SRC_DIR=src
-BIN_DIR=bin
-OBJ_DIR=obj
-CFLAGS=-Iinclude -Wall -Wextra -O2
+SRC_DIR = src
+BIN_DIR = bin
+OBJ_DIR = obj
+CFLAGS = -Iinclude -Wall -Wextra -O2
 
-TARGET=$(BIN)/main
+TARGET = $(BIN)/main
 
 SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
