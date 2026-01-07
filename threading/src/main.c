@@ -22,6 +22,25 @@ typedef struct {
   int stop;
 } threadpool_t;
 
+void thread_function(void *arg) {
+  threadpool_t *pool = (threadpool_t *)arg;
+  while (1) {
+    pthread_mutex_lock(&pool->lock);
+    while (pool->queued == 0 && !pool->stop) {
+      pthread_cond_wait(&pool->notify, &pool->lock);
+    }
+    if (pool->stop) {
+      pthread_mutex_unlock(&pool->lock);
+      break;
+    }
+    task_t task = pool->task_queue[pool->queue_front];
+    pool->queue_front = (pool->queue_front + 1) % QUEUE_SIZE;
+    pool->queued--;
+    pthread_mutex_unlock(&pool->lock);
+    task.fn(task.arg);
+  }
+}
+
 void thread_pool_init(threadpool_t *pool) {
   pool->queued = 0;
   pool->queue_front = 0;
