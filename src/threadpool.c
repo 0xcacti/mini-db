@@ -42,3 +42,43 @@ void threadpool_init(threadpool_t *pool) {
     pthread_create(&(pool->threads[i]), NULL, thread_function, pool);
   }
 }
+
+void threadpool_add_task(threadpool_t *pool, void (*function)(void *), void *arg) {
+  pthread_mutex_lock(&pool->lock);
+
+  if (pool->stop) {
+    pthread_mutex_unlock(&pool->lock);
+    return;
+  }
+
+  if (pool->queued >= QUEUE_SIZE) {
+    pthread_mutex_unlock(&pool->lock);
+    return;
+  }
+
+  pool->task_queue[pool->queue_back].fn = function;
+  pool->task_queue[pool->queue_back].arg = arg;
+  pool->queue_back = (pool->queue_back + 1) % QUEUE_SIZE;
+  pool->queued++;
+
+  pthread_cond_signal(&pool->notify);
+  pthread_mutex_unlock(&pool->lock);
+}
+
+void threadpool_destroy(threadpool_t *pool) {
+  pthread_mutex_lock(&pool->lock);
+  pool->stop = 1;
+  pthread_cond_broadcast(&pool->notify);
+  pthread_mutex_unlock(&pool->lock);
+
+  for (int i = 0; i < THREADS; i++) {
+    pthread_join(pool->threads[i], NULL);
+  }
+
+  pthread_mutex_destroy(&pool->lock);
+  pthread_cond_destroy(&pool->notify);
+}
+
+void example_task(void *arg) {
+  (void)arg;
+}
