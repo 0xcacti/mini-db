@@ -1,4 +1,4 @@
-#include "threadpool.h"
+#include "../inc/threadpool.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
