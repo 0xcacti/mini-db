@@ -1,0 +1,32 @@
+[
+ {
+  "directory": "/Users/t/code/c/lla",
+  "arguments": [
+   "/opt/homebrew/opt/llvm/bin/clang",
+   "-Iinc",
+   "-Wall",
+   "-Wextra",
+   "-O2",
+   "-c",
+   "-o",
+   "obj/main.o",
+   "src/main.c"
+  ],
+  "file": "src/main.c"
+ },
+ {
+  "directory": "/Users/t/code/c/lla",
+  "arguments": [
+   "/opt/homebrew/opt/llvm/bin/clang",
+   "-Iinc",
+   "-Wall",
+   "-Wextra",
+   "-O2",
+   "-c",
+   "-o",
+   "obj/threadpool.o",
+   "src/threadpool.c"
+  ],
+  "file": "src/threadpool.c"
+ }
+]
